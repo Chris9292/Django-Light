@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import TaskSerializer
@@ -8,7 +9,7 @@ from .models import Task
 # Create your views here.
 
 def index(request):
-    return render("index.html")
+    return render(request, "index.html")
 
 @api_view(["GET"])
 def apiOverview(request):
@@ -27,6 +28,7 @@ def apiOverview(request):
 def taskList(request):
     tasks = Task.objects.all()
     serializer = TaskSerializer(tasks, many=True)
+    
     return Response(serializer.data)
 
 
@@ -34,6 +36,7 @@ def taskList(request):
 def taskDetail(request, pk):
     task = Task.objects.get(id=pk)
     serializer = TaskSerializer(task, many=False)
+
     return Response(serializer.data)
 
 
@@ -43,9 +46,9 @@ def taskCreate(request):
 
     if serializer.is_valid():
         serializer.save()
-        return redirect("http://127.0.0.1:8000/task-list/")
+        return redirect("http://127.0.0.1:8000/api/")
 
-    return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
@@ -55,9 +58,9 @@ def taskUpdate(request, pk):
 
     if serializer.is_valid():
         serializer.save()
-        return redirect("http://127.0.0.1:8000/task-list/")
+        return redirect("http://127.0.0.1:8000/api/")
 
-    return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["DELETE"])
@@ -66,4 +69,4 @@ def taskDelete(request, pk):
     task_id = task.id
     task.delete()
 
-    return Response("Task successfully deleted.")
+    return Response(f"Task with id: {task_id} successfully deleted.")
