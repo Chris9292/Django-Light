@@ -6,10 +6,11 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import TaskSerializer
 from .models import Task
-# Create your views here.
 
-def index(request):
-    return render(request, "index.html")
+
+# def index(request):
+#     return render(request, "index.html")
+
 
 @api_view(["GET"])
 def apiOverview(request):

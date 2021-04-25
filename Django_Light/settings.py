@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'api'
+    'api',
+    'weatherbox'
 ]
 
 MIDDLEWARE = [
@@ -82,7 +83,7 @@ DATABASES = {
         'NAME': 'Light', 
         'USER': 'postgres', 
         'PASSWORD': '07041992',
-        'HOST': 'localhost', 
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
@@ -112,13 +113,15 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+#change to equivalent timezone
+TIME_ZONE = 'Europe/Athens'
 
 USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+#false = django displays the correct datetime
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
