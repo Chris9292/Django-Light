@@ -6,15 +6,29 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import TaskSerializer
 from .models import Task
+from weatherbox.models import Data
+from weatherbox.serializers import DataSerializer
+from .database import Database
+
+# connect to DB
+db = Database()
+con, cursor = db.connect()
 
 
-# def index(request):
-#     return render(request, "index.html")
+@api_view(["GET"])
+def getLatestSensorData(request):
+
+    # search for last record added in the database and return as http response
+    data = Data.objects.order_by("date")
+    serializer = DataSerializer(data[len(data)-1])
+    print(serializer.data)
+    return Response(serializer.data)
 
 
 @api_view(["GET"])
 def apiOverview(request):
     api_urls = {
+        "Sensor Data": "/sensor-data/",
         "List": "/task-list/",
         "Detail View": "/task-detail/<str:pk>/",
         "Create": "/task-create/",
