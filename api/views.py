@@ -1,6 +1,4 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
-
+from django.shortcuts import render, redirect, HttpResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -8,32 +6,38 @@ from .serializers import TaskSerializer
 from .models import Task
 from weatherbox.models import Data
 from weatherbox.serializers import DataSerializer
-from .database import Database
+import requests
+from PIL import Image
+import io
 
-# connect to DB
-db = Database()
-con, cursor = db.connect()
 
 
 @api_view(["GET"])
-def getLatestSensorData(request):
-
+def getSensorData(request):
     # search for last record added in the database and return as http response
     data = Data.objects.order_by("date")
     serializer = DataSerializer(data[len(data)-1])
-    print(serializer.data)
     return Response(serializer.data)
+
+
+@api_view(["GET"])
+def getSensorDataByName(request, name):
+    data = Data.objects.raw(f"SELECT * FROM sensor_data WHERE name = '{name}' ORDER BY id DESC LIMIT 1")[0]
+    return Response(DataSerializer(data).data)
+
+
+def cameraFeed(request):
+    url = "http://192.168.1.6/record/current.jpg"
+    r = requests.get(url)
+    return HttpResponse(r, content_type="image/png")
 
 
 @api_view(["GET"])
 def apiOverview(request):
     api_urls = {
         "Sensor Data": "/sensor-data/",
-        "List": "/task-list/",
-        "Detail View": "/task-detail/<str:pk>/",
-        "Create": "/task-create/",
-        "Update": "/task-update/<str:pk>/",
-        "Delete": "/task-delete/<str:pk>",
+        "Sensor Data By Name": "/sensor-data/<str:name>/",
+        "Camera Frames": "/camera/feed/",
     }
 
     return Response(api_urls)

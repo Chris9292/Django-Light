@@ -8,7 +8,6 @@ class Data(models.Model):
     class Meta:
         db_table = "sensor_data"
 
-    s_id = models.PositiveSmallIntegerField()
     name = models.CharField(max_length=20)
     value = models.FloatField()
     date = models.DateTimeField(auto_now_add=True)
